@@ -82,11 +82,9 @@ function App() {
 
         <AdvancedSearch />
         <div className="flex gap-10 mt-10 flex-wrap"> 
-          <ProspectCard cardData={prospectData[0].cardData} status={prospectData[0].status} />
-          <ProspectCard cardData={prospectData[1].cardData} status={prospectData[1].status} />
-          <ProspectCard cardData={prospectData[2].cardData} status={prospectData[2].status} />
-          <ProspectCard cardData={prospectData[3].cardData} status={prospectData[3].status} />
-
+          {prospectData.map((card, index) => (
+            <ProspectCard key={index} cardData={card.cardData} status={card.status} />
+          ))}
         </div>
       </Container>
     </>
