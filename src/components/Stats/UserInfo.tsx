@@ -3,7 +3,7 @@ import { FaPen } from "react-icons/fa6";
 
 export default function UserInfo() {
   return (
-    <div className=" w-[45%] h-[300px] flex-col mt-10 mb-10 rounded-lg p-4 flex   items-center  shadow-customshadow1 border border-gray-300 relative">
+    <div className=" w-[45%] h-[300px] flex-col mt-2 mb-10 rounded-lg p-4 flex   items-center  shadow-customshadow1 border border-gray-300 relative">
       <div
 
         className="absolute top-4 right-4 cursor-pointer text-md text-gray-400 transition-all hover:text-gray-500"

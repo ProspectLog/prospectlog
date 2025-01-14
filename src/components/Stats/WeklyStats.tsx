@@ -74,7 +74,7 @@ export default function WeeklyStats() {
 
   return (
     
-    <div className=" w-[45%] h-[300px] mt-10 mb-10 rounded-lg p-4 flex flex-col justify-center items-center shadow-customshadow1 border border-gray-300 relative">
+    <div className=" w-[45%] h-[300px] mt-2 mb-10 rounded-lg p-4 flex flex-col justify-center items-center shadow-customshadow1 border border-gray-300 relative">
       <Doughnut data={data} options={options} />
       {/* Texte au centre du graphique */}
       <div className="absolute flex flex-col items-center bottom-20">
