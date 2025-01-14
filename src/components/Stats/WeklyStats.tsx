@@ -15,7 +15,7 @@ export default function WeeklyStats() {
   const [newTotal, setNewTotal] = useState(total); // Nouveau total à modifier
 
   const data = {
-    labels: ['Progress', 'Remaining'],
+    labels: ['Progress', 'A faire'], // Légende du camembert
     datasets: [
       {
         data: [completed, remaining],
@@ -74,7 +74,7 @@ export default function WeeklyStats() {
 
   return (
     
-    <div className="bg-slate-200 w-[45%] h-[300px] mt-10 mb-10 rounded-lg p-4 flex flex-col justify-center items-center shadow-customshadow1 border border-gray-300 relative">
+    <div className=" w-[45%] h-[300px] mt-10 mb-10 rounded-lg p-4 flex flex-col justify-center items-center shadow-customshadow1 border border-gray-300 relative">
       <Doughnut data={data} options={options} />
       {/* Texte au centre du graphique */}
       <div className="absolute flex flex-col items-center bottom-20">
