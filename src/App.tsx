@@ -1,6 +1,7 @@
 import { useState } from "react"; 
 import Container from "./components/Container/Container";
 import AdvancedSearch from "./components/AdvancedSearch/AdvancedSearch";
+import WeklyStats from "./components/Stats/WeklyStats";
 
 
 function App() {
@@ -10,10 +11,7 @@ function App() {
   return (
     <>
      <Container>
-        <h1>Counter</h1>
-        <p>{count}</p>
-        <button onClick={() => setCount(count + 1)}>Increment</button>
-        <button onClick={() => setCount(count - 1)}>Decrement</button>
+        <WeklyStats />
         <AdvancedSearch />
      </Container>
     </>
