@@ -7,69 +7,47 @@ import MonthlyStats from "./components/Stats/MonthlyStats";
 import Nav from "./components/Nav/Nav";
 import ProspectCard from "./components/Card/ProspectCard";
 import UpdateModal from "./components/Modal/UpdateModal /UpdateModal";
+import { useEffect } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./config/firebaseConfig"; // Assurez-vous d'avoir votre configuration Firebase
+
 
 function App() {
   const [selectedCard, setSelectedCard] = useState(null); // Pour gérer la carte sélectionnée
   const [isModalOpen, setModalOpen] = useState(false); // Pour gérer l'état de la modal
+  const [prospectData, setProspectData] = useState<ProspectCardProps[]>([]);
 
-  const prospectData: ProspectCardProps[] = [
-    {
-      cardData: {
-        name: "Jean Dupont",
-        contactedBy: "Alice Martin",
-        phone: "+33 6 12 34 56 78",
-        origin: "Google Ads",
-        job: "Diagnostiqueur immobilier",
-        recall: "12-01-2025 à 15h",
-        creation: "2025-01-10",
-        lastEdit: "2025-01-12",
-        society: "ImmoDiag",
-      },
-      status: "pending",
-    },
-    {
-      cardData: {
-        name: "Marie Legrand",
-        contactedBy: "Paul Durand",
-        phone: "+33 6 87 65 43 21",
-        origin: "Facebook",
-        job: "Architecte",
-        recall: "12-01-2025 à 15h",
-        creation: "2025-01-08",
-        lastEdit: "2025-01-11",
-        society: "ArchDesign",
-      },
-      status: "not now",
-    },
-    {
-      cardData: {
-        name: "Luc Morel",
-        contactedBy: "Sophie Bernard",
-        phone: "+33 6 98 76 54 32",
-        origin: "BAO",
-        job: "Agent immobilier",
-        recall: "12-01-2025 à 15h",
-        creation: "2025-01-05",
-        lastEdit: "2025-01-07",
-        society: "ImmoPlus",
-      },
-      status: "confirm",
-    },
-    {
-      cardData: {
-        name: "Claire Lefèvre",
-        contactedBy: "Thomas Perrin",
-        phone: "+33 6 77 88 99 00",
-        origin: "LinkedIn",
-        job: "Évaluateur de biens",
-        recall: "12-01-2025 à 15h",
-        creation: "2024-12-30",
-        lastEdit: "2025-01-03",
-        society: "EvalImmo",
-      },
-      status: "dead",
-    },
-  ];
+
+
+  useEffect(() => {
+    const fetchProspectData = async () => {
+      const querySnapshot = await getDocs(collection(db, "prospects"));
+      const data = querySnapshot.docs.map(doc => {
+        console.log(doc.data());
+        
+        const docData = doc.data();
+        return {
+          cardData: {
+            name: docData.nom || "",
+            contactedBy: docData.contact || "",
+            phone: docData.tel || "",
+            origin: docData.origine || "",
+            job: docData.metier || "",
+            recall: docData.rappel || "",
+            createdAt: docData.createdAt ? docData.createdAt.toDate().toLocaleString() : "N/A",
+            updatedAt: docData.updatedAt ? docData.updatedAt.toDate().toLocaleString() : "N/A",
+          },
+          statut: docData.statut || "pending",
+        };
+      });
+      setProspectData(data);
+
+      
+    };
+    
+    fetchProspectData();
+
+  }, []);
 
 
   const handleCloseModal = () => {

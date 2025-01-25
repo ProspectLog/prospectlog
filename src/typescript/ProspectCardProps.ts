@@ -7,8 +7,8 @@ type ProspectCardProps = {
       job: string;
       recall: string;
       society: string;
-      creation: string;
-      lastEdit: string;
+      createdAt: string;
+      updatedAt: string;
     };
     status: "pending" | "not now" | "confirm" | "dead";
   };

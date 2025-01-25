@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { db } from "../../config/firebaseConfig"; // Importez votre instance Firebase
-import { collection, addDoc } from "firebase/firestore"; // Importez les outils nécessaires
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"; // Importez les outils nécessaires
 import DropDown from "../Dropdown/DropDown";
 import { CiSearch } from "react-icons/ci";
 
@@ -23,8 +23,14 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     e.preventDefault();
 
     try {
-      const docRef = await addDoc(collection(db, "prospects"), formData); // Remplacez "prospects" par votre collection Firebase
+      const docRef = await addDoc(collection(db, "prospects"), {
+        ...formData,
+        createdAt: serverTimestamp(), // Ajoute le timestamp de création
+        updatedAt: serverTimestamp(), // Ajoute le timestamp de modification
+      });
       console.log("Document ajouté avec ID : ", docRef.id);
+
+      // Réinitialise le formulaire et ferme la modal
       setFormData({
         nom: "",
         contact: "",
@@ -34,12 +40,11 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
         rappel: "",
         statut: "pending",
       });
-      onClose(); // Fermez la modal après soumission
+      onClose();
     } catch (error) {
       console.error("Erreur lors de l'ajout du document : ", error);
     }
   };
-
   if (!isOpen) return null;
 
   return (

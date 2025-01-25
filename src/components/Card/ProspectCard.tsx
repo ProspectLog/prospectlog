@@ -38,8 +38,8 @@ export default function ProspectCard({ cardData , status }: ProspectCardProps) {
         </div>
         <div className="bg-slate-200 w-full h-[50px] mt-4"></div>
         <div className="w-full flex justify-between mt-2 text-[10px]">
-          <h4><strong>Création</strong>   <br />{cardData.creation} </h4>
-          <h4><strong>Modifications </strong>  <br />{cardData.lastEdit} </h4>
+          <h4><strong>Création</strong>   <br />{cardData.createdAt} </h4>
+          <h4><strong>Modifications </strong>  <br />{cardData.updatedAt} </h4>
         </div>
       </div>
     );
