@@ -96,7 +96,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
         <div className="mt-4 flex gap-4">
           <button
             onClick={onClose}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
           >
             Ajouter
           </button>

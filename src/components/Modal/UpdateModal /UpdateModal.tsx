@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { IoIosWarning } from "react-icons/io";
 
 export default function UpdateModal({
   cardData,
@@ -13,45 +14,90 @@ export default function UpdateModal({
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         transition={{ type: "spring", stiffness: 260, damping: 30 }}
-        className="bg-white p-6 rounded-lg w-[700px] flex flex-col  shadow-lg relative"
+        className="bg-white  rounded-lg w-[700px] flex flex-col  shadow-lg relative"
       >
-        <button
-          className="absolute top-2 right-2 text-xl font-bold"
-          onClick={onClose}
-        >
-          ✖
-        </button>
-        <h2 className="text-2xl mb-4 font-bold text-center">{cardData.society}</h2>
-        <div className="flex flex-col gap-10">
+        <div className="bg-green-500 w-full py-2 ">
+          <button
+            className="absolute top-2  right-2 text-xl font-bold"
+            onClick={onClose}
+          >
+            ✖
+          </button>
+          <h2 className="text-2xl mt-2 font-bold text-center">
+            {cardData.society}
+          </h2>
+        </div>
+
+        <div className="flex flex-col gap-10 p-6">
           <div className="flex justify-between">
-            <div className="flex flex-col gap-2">
-              <p>
-                <strong>Nom:</strong> {cardData.name}
-              </p>
-              <p>
-                <strong>Contacté par:</strong> {cardData.contactedBy}
-              </p>
-              <p>
-                <strong>Téléphone:</strong> {cardData.phone}
-              </p>
-              <p>
-                <strong>Origine:</strong> {cardData.origin}
-              </p>
+            <div className="flex flex-col gap-2 mx-3 ">
+              <label className="">
+                <strong>Nom:</strong>
+                <input
+                  type="text"
+                  defaultValue={cardData.name}
+                  className="bg-gray-100 p-2 border rounded w-full"
+                />
+              </label>
+              <label>
+                <strong>Contacté par:</strong>
+                <input
+                  type="text"
+                  defaultValue={cardData.contactedBy}
+                  className="bg-gray-100 p-2 border rounded w-full"
+                />
+              </label>
+              <label>
+                <strong>Téléphone:</strong>
+                <input
+                  type="text"
+                  defaultValue={cardData.phone}
+                  className="bg-gray-100 p-2 border rounded w-full"
+                />
+              </label>
+              <label>
+                <strong>Origine:</strong>
+                <input
+                  type="text"
+                  defaultValue={cardData.origin}
+                  className="bg-gray-100 p-2 border rounded w-full"
+                />
+              </label>
             </div>
 
             <div className="flex flex-col gap-2">
-              <p>
-                <strong>Métier:</strong> {cardData.job}
-              </p>
-              <p>
-                <strong>Rappel:</strong> {cardData.recall}
-              </p>
-              <p>
-                <strong>Création:</strong> {cardData.creation}
-              </p>
-              <p>
-                <strong>Dernière modification:</strong> {cardData.lastEdit}
-              </p>
+              <label>
+                <strong>Métier:</strong>
+                <input
+                  type="text"
+                  defaultValue={cardData.job}
+                  className="bg-gray-100 p-2 border rounded w-full"
+                />
+              </label>
+              <label>
+                <strong>Rappel:</strong>
+                <input
+                  type="text"
+                  defaultValue={cardData.recall}
+                  className="bg-gray-100 p-2 border rounded w-full"
+                />
+              </label>
+              <label>
+                <strong>Création:</strong>
+                <input
+                  type="text"
+                  defaultValue={cardData.creation}
+                  className="bg-gray-100 p-2 border rounded w-full"
+                />
+              </label>
+              <label>
+                <strong>Dernière modification:</strong>
+                <input
+                  type="text"
+                  defaultValue={cardData.lastEdit}
+                  className="bg-gray-100 p-2 border rounded w-full"
+                />
+              </label>
             </div>
           </div>
           <div>
@@ -63,9 +109,13 @@ export default function UpdateModal({
                 defaultValue={cardData.description}
               />
             </label>
+            <p className=" text-red-500 flex gap-2 items-center font-bold">
+              <IoIosWarning />
+              {cardData.name} devra étre rapelé le {cardData.recall}
+            </p>
           </div>
         </div>
-        <div className="flex w-full justify-end h-full gap-4 items-end">
+        <div className="flex w-full justify-end h-full gap-4 p-4 items-end">
           <button
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
             onClick={() => {
