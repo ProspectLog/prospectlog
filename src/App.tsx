@@ -6,10 +6,12 @@ import UserInfo from "./components/Stats/UserInfo";
 import MonthlyStats from "./components/Stats/MonthlyStats";
 import Nav from "./components/Nav/Nav";
 import ProspectCard from "./components/Card/ProspectCard";
+import UpdateModal from "./components/Modal/UpdateModal /UpdateModal";
 
 function App() {
+  const [selectedCard, setSelectedCard] = useState(null); // Pour gérer la carte sélectionnée
+  const [isModalOpen, setModalOpen] = useState(false); // Pour gérer l'état de la modal
 
-  
   const prospectData: ProspectCardProps[] = [
     {
       cardData: {
@@ -68,7 +70,18 @@ function App() {
       status: "dead",
     },
   ];
-  
+
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedCard(null);
+  }
+
+  const handleCardClick = (cardData: any) => {
+    setSelectedCard(cardData);
+    setModalOpen(true);
+  };
+
 
   return (
     <>
@@ -81,12 +94,25 @@ function App() {
         <MonthlyStats />
 
         <AdvancedSearch />
-        <div className="flex gap-10 mt-10 flex-wrap"> 
+        <div className="flex gap-10 mt-10 flex-wrap">
           {prospectData.map((card, index) => (
-            <ProspectCard key={index} cardData={card.cardData} status={card.status} />
+            <div
+              key={index}
+              onClick={() => handleCardClick(card.cardData)}
+            >
+              <ProspectCard
+                key={index}
+                cardData={card.cardData}
+                status={card.status}
+              />
+            </div>
           ))}
         </div>
       </Container>
+
+      {isModalOpen && selectedCard && (
+        <UpdateModal cardData={selectedCard} onClose={handleCloseModal} ></UpdateModal>
+      )}
     </>
   );
 }

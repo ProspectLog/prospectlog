@@ -14,7 +14,7 @@ export default function ProspectCard({ cardData , status }: ProspectCardProps) {
         : "bg-gray-900";
   
     return (
-      <div className="mb-10 rounded-lg p-4 shadow-customshadow1 border border-gray-300 w-[270px] flex flex-col justify-end  relative">
+      <div className="mb-10 rounded-lg p-4 shadow-customshadow1 cursor-pointer hover:scale-[1.03] transition-all border border-gray-300 w-[270px] flex flex-col justify-end  relative">
         <h3 className="text-center text-2xl">{cardData.society}</h3>
         {/* Logo dynamique */}
         <div
