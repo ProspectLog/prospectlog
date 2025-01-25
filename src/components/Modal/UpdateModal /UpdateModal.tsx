@@ -121,7 +121,7 @@ export default function UpdateModal({
                 <input
                   type="text"
                   name="creation"
-                  value={formData.creation}
+                  value={formData.createdAt}
                   onChange={handleChange}
                   className="bg-gray-100 p-2 border rounded w-full"
                 />
@@ -131,7 +131,7 @@ export default function UpdateModal({
                 <input
                   type="text"
                   name="lastEdit"
-                  value={formData.lastEdit}
+                  value={formData.updatedAt}
                   onChange={handleChange}
                   className="bg-gray-100 p-2 border rounded w-full"
                 />
