@@ -46,7 +46,7 @@ export default function UpdateModal({
             ✖
           </button>
           <h2 className="text-2xl mt-2 font-bold text-center">
-            {cardData.society}
+            {cardData.name}
           </h2>
         </div>
 
