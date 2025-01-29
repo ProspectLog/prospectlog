@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { IoIosWarning } from "react-icons/io";
 import { db } from "../../../config/firebaseConfig"; // Importez votre instance Firebase
-import { doc, updateDoc } from "firebase/firestore"; // Importez les outils nécessaires
+import { doc, updateDoc, Timestamp , deleteDoc} from "firebase/firestore"; // Importez les outils nécessaires
 
 export default function UpdateModal({
   cardData,
@@ -13,8 +13,24 @@ export default function UpdateModal({
 }) {
   const [formData, setFormData] = useState(cardData);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+
+    try {
+      await deleteDoc(doc(db, "prospects", cardData.id));
+      console.log("Document supprimé avec succès");
+      onClose(); // Fermez la modal après soumission
+
+    }catch (error) {
+      console.error("Erreur lors de la suppression du document : ", error);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,7 +38,11 @@ export default function UpdateModal({
 
     try {
       const docRef = doc(db, "prospects", cardData.id); // Remplacez "prospects" par votre collection Firebase
-      await updateDoc(docRef, formData);
+      const updateData = {
+        ...formData,
+        updatedAt: Timestamp.now(), // Met à jour avec l'heure actuelle Firestore
+      };
+      await updateDoc(docRef, updateData);
       console.log("Document mis à jour avec succès");
       onClose(); // Fermez la modal après soumission
     } catch (error) {
@@ -46,7 +66,7 @@ export default function UpdateModal({
             ✖
           </button>
           <h2 className="text-2xl mt-2 font-bold text-center">
-            {cardData.name}
+            {cardData.nom}
           </h2>
         </div>
 
@@ -57,8 +77,8 @@ export default function UpdateModal({
                 <strong>Nom:</strong>
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="nom"
+                  value={formData.nom}
                   onChange={handleChange}
                   className="bg-gray-100 p-2 border rounded w-full"
                 />
@@ -67,8 +87,8 @@ export default function UpdateModal({
                 <strong>Contacté par:</strong>
                 <input
                   type="text"
-                  name="contactedBy"
-                  value={formData.contactedBy}
+                  name="contact"
+                  value={formData.contact}
                   onChange={handleChange}
                   className="bg-gray-100 p-2 border rounded w-full"
                 />
@@ -77,8 +97,8 @@ export default function UpdateModal({
                 <strong>Téléphone:</strong>
                 <input
                   type="text"
-                  name="phone"
-                  value={formData.phone}
+                  name="tel"
+                  value={formData.tel}
                   onChange={handleChange}
                   className="bg-gray-100 p-2 border rounded w-full"
                 />
@@ -87,8 +107,8 @@ export default function UpdateModal({
                 <strong>Origine:</strong>
                 <input
                   type="text"
-                  name="origin"
-                  value={formData.origin}
+                  name="origine"
+                  value={formData.origine}
                   onChange={handleChange}
                   className="bg-gray-100 p-2 border rounded w-full"
                 />
@@ -100,8 +120,8 @@ export default function UpdateModal({
                 <strong>Métier:</strong>
                 <input
                   type="text"
-                  name="job"
-                  value={formData.job}
+                  name="metier"
+                  value={formData.metier}
                   onChange={handleChange}
                   className="bg-gray-100 p-2 border rounded w-full"
                 />
@@ -110,8 +130,8 @@ export default function UpdateModal({
                 <strong>Rappel:</strong>
                 <input
                   type="text"
-                  name="recall"
-                  value={formData.recall}
+                  name="rappel"
+                  value={formData.rappel}
                   onChange={handleChange}
                   className="bg-gray-100 p-2 border rounded w-full"
                 />
@@ -151,16 +171,14 @@ export default function UpdateModal({
             </label>
             <p className=" text-red-500 flex gap-2 items-center font-bold">
               <IoIosWarning />
-              {cardData.name} devra étre rapelé le {cardData.recall}
+              {cardData.name} devra étre rapelé le {cardData.rappel}
             </p>
           </div>
           <div className="flex w-full justify-end h-full gap-4 p-4 items-end">
             <button
               type="button"
               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-              onClick={() => {
-                // Add your delete logic here
-              }}
+              onClick={handleDelete}
             >
               Supprimer
             </button>

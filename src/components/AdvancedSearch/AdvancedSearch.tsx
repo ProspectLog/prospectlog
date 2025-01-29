@@ -25,8 +25,8 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     try {
       const docRef = await addDoc(collection(db, "prospects"), {
         ...formData,
-        createdAt: serverTimestamp(), // Ajoute le timestamp de création
-        updatedAt: serverTimestamp(), // Ajoute le timestamp de modification
+        createdAt: new Date(), // Ajoute le timestamp de création
+        updatedAt: new Date(), // Ajoute le timestamp de modification
       });
       console.log("Document ajouté avec ID : ", docRef.id);
 

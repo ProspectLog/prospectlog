@@ -1,14 +1,14 @@
 type ProspectCardProps = {
     cardData: {
-      name: string;
-      contactedBy: string;
-      phone: string;
-      origin: string;
-      job: string;
-      recall: string;
-      society: string;
+      nom: string;
+      contact: string;
+      tel: string;
+      origine: string;
+      metier: string;
+      rappel: string;
       createdAt: string;
       updatedAt: string;
+      id: string;
     };
     status: "pending" | "not now" | "confirm" | "dead";
   };
