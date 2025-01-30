@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function ProspectCard({ cardData, status, handleCardClick }: ProspectCardProps) {
+export default function ProspectCard({ cardData, statut, handleCardClick }: ProspectCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleClick = () => {
     setIsModalOpen((prev) => !prev);
   };
@@ -47,19 +46,19 @@ export default function ProspectCard({ cardData, status, handleCardClick }: Pros
 
   // Définir des styles et des icônes dynamiques en fonction du statut
   const statusIcon =
-    status === "pending"
+  statut === "pending"
       ? "😬"
-      : status === "not now"
+      : statut === "not now"
       ? "💤"
-      : status === "confirm"
+      : statut === "confirm"
       ? "🎉"
       : "💀";
   const bgColor =
-    status === "pending"
+    statut === "pending"
       ? "bg-blue-500"
-      : status === "not now"
+      : statut === "not now"
       ? "bg-yellow-500"
-      : status === "confirm"
+      : statut === "confirm"
       ? "bg-green-500"
       : "bg-gray-900";
 

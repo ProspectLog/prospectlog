@@ -12,15 +12,16 @@ import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "./config/firebaseConfig"; // Assurez-vous d'avoir votre configuration Firebase
 
 function App() {
-  const [selectedCard, setSelectedCard] = useState(null); // Pour gérer la carte sélectionnée
+  const [selectedCard, setSelectedCard] = useState<ProspectCardProps["cardData"] | null>(null); // Pour gérer la carte sélectionnée
   const [isModalOpen, setModalOpen] = useState(false); // Pour gérer l'état de la modal
-  const [prospectData, setProspectData] = useState<ProspectCardProps[]>([]);
+  const [prospectData, setProspectData] = useState<{ cardData: ProspectCardProps["cardData"]; statut: string; }[]>([]);
 
   useEffect(() => {
     const fetchProspectData = async () => {
       const querySnapshot = await getDocs(collection(db, "prospects"));
       const data = querySnapshot.docs.map((doc) => {
         const docData = doc.data();
+        
 
         // Fonction pour convertir un champ de date
         const formatDate = (dateValue: any) => {
@@ -31,7 +32,7 @@ function App() {
           }
         };
 
-
+        
         return {
           cardData: {
             nom: docData.nom || "",
@@ -47,7 +48,8 @@ function App() {
           statut: docData.statut || "pending",
         };
       });
-      setProspectData(data);
+      setProspectData(data as { cardData: ProspectCardProps["cardData"]; statut: string; }[]);
+      
     };
 
     fetchProspectData();
@@ -58,7 +60,7 @@ function App() {
     setSelectedCard(null);
   };
 
-  const handleCardClick = (cardData: any) => {
+  const handleCardClick = (cardData: ProspectCardProps["cardData"]) => {
     setSelectedCard(cardData);
     setModalOpen(true);
   };
@@ -80,9 +82,9 @@ function App() {
               <ProspectCard
                 key={index}
                 cardData={card.cardData}
-                status={card.status}
+                statut={card.statut}
                 handleCardClick={handleCardClick}
-              />
+                />
             </div>
           ))}
         </div>
