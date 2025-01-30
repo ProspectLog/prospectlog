@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { db } from "../../config/firebaseConfig"; // Importez votre instance Firebase
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"; // Importez les outils nécessaires
+import { collection, addDoc } from "firebase/firestore"; // Importez les outils nécessaires
 import DropDown from "../Dropdown/DropDown";
 import { CiSearch } from "react-icons/ci";
 
@@ -48,7 +48,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div role="dialog" className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg p-6 w-1/3 shadow-lg">
         <h2 className="text-xl font-bold mb-4">Ajouter un Prospect</h2>
         <form className="space-y-4 relative" onSubmit={handleSubmit}>
@@ -112,6 +112,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             <input
               type="date"
               name="rappel"
+              placeholder="Date"
               value={formData.rappel}
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -122,6 +123,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             <select
               name="statut"
               value={formData.statut}
+              role="Statut"
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             >

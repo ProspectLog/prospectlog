@@ -11,4 +11,5 @@ type ProspectCardProps = {
       id: string;
     };
     status: "pending" | "not now" | "confirm" | "dead";
+    
   };
