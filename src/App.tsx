@@ -12,27 +12,36 @@ import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "./config/firebaseConfig"; // Assurez-vous d'avoir votre configuration Firebase
 
 function App() {
-  const [selectedCard, setSelectedCard] = useState<ProspectCardProps["cardData"] | null>(null); // Pour gérer la carte sélectionnée
+  const [selectedCard, setSelectedCard] = useState<
+    ProspectCardProps["cardData"] | null
+  >(null); // Pour gérer la carte sélectionnée
   const [isModalOpen, setModalOpen] = useState(false); // Pour gérer l'état de la modal
-  const [prospectData, setProspectData] = useState<{ cardData: ProspectCardProps["cardData"]; statut: string; }[]>([]);
+  const [prospectData, setProspectData] = useState<
+    { cardData: ProspectCardProps["cardData"]; statut: string }[]
+  >([]);
+  const [filteredData, setFilteredData] = useState(prospectData);
+  const [filters, setFilters] = useState({ origine: "", contact: "" });
 
+  const [origins, setOrigins] = useState<string[]>([]);
+  const [contacts, setContacts] = useState<string[]>([]);
   useEffect(() => {
     const fetchProspectData = async () => {
       const querySnapshot = await getDocs(collection(db, "prospects"));
       const data = querySnapshot.docs.map((doc) => {
         const docData = doc.data();
-        
 
         // Fonction pour convertir un champ de date
         const formatDate = (dateValue: any) => {
           if (dateValue instanceof Timestamp) {
             return dateValue.toDate().toLocaleString(); // Firestore Timestamp
-          } else if (typeof dateValue === "string" || typeof dateValue === "number") {
+          } else if (
+            typeof dateValue === "string" ||
+            typeof dateValue === "number"
+          ) {
             return dateValue.toLocaleString(); // Chaîne ou timestamp numérique
           }
         };
 
-        
         return {
           cardData: {
             nom: docData.nom || "",
@@ -48,8 +57,18 @@ function App() {
           statut: docData.statut || "pending",
         };
       });
-      setProspectData(data as { cardData: ProspectCardProps["cardData"]; statut: string; }[]);
-      
+      setProspectData(
+        data as { cardData: ProspectCardProps["cardData"]; statut: string }[]
+      );
+      const uniqueOrigins = Array.from(
+        new Set(data.map((item) => item.cardData.origine))
+      ).filter(Boolean);
+      const uniqueContacts = Array.from(
+        new Set(data.map((item) => item.cardData.contact))
+      ).filter(Boolean);
+
+      setOrigins(uniqueOrigins);
+      setContacts(uniqueContacts);
     };
 
     fetchProspectData();
@@ -65,6 +84,22 @@ function App() {
     setModalOpen(true);
   };
 
+  useEffect(() => {
+    console.log("Filters changed", filters);
+    
+    setFilteredData(
+      prospectData.filter(
+        (prospect) =>
+          (filters.origine
+            ? prospect.cardData.origine === filters.origine
+            : true) &&
+          (filters.contact
+            ? prospect.cardData.contact === filters.contact
+            : true)
+      )
+    );
+  }, [filters, prospectData]);
+
   return (
     <>
       <Nav />
@@ -75,16 +110,16 @@ function App() {
         </div>
         <MonthlyStats />
 
-        <AdvancedSearch />
+        <AdvancedSearch origins={origins} contacts={contacts} setFilters={setFilters} />
         <div className="flex gap-10 mt-10 flex-wrap">
-          {prospectData.map((card, index) => (
-            <div key={index} >
+          {filteredData.map((card, index) => (
+            <div key={index}>
               <ProspectCard
                 key={index}
                 cardData={card.cardData}
                 statut={card.statut}
                 handleCardClick={handleCardClick}
-                />
+              />
             </div>
           ))}
         </div>

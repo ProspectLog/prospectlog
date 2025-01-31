@@ -15,7 +15,9 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     statut: "pending",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -48,12 +50,17 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   if (!isOpen) return null;
 
   return (
-    <div role="dialog" className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div
+      role="dialog"
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+    >
       <div className="bg-white rounded-lg p-6 w-1/3 shadow-lg">
         <h2 className="text-xl font-bold mb-4">Ajouter un Prospect</h2>
         <form className="space-y-4 relative" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Nom</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Nom
+            </label>
             <input
               type="text"
               name="nom"
@@ -64,7 +71,9 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Contacté par</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Contacté par
+            </label>
             <input
               type="text"
               name="contact"
@@ -75,7 +84,9 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Tel</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Tel
+            </label>
             <input
               type="tel"
               name="tel"
@@ -86,7 +97,9 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Origine</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Origine
+            </label>
             <input
               type="text"
               name="origine"
@@ -97,7 +110,9 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Métier</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Métier
+            </label>
             <input
               type="text"
               name="metier"
@@ -108,7 +123,9 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Rappel</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Rappel
+            </label>
             <input
               type="date"
               name="rappel"
@@ -119,7 +136,9 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Statut</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Statut
+            </label>
             <select
               name="statut"
               value={formData.statut}
@@ -154,11 +173,27 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   );
 }
 
-export default function AdvancedSearch() {
+export default function AdvancedSearch({
+  origins,
+  contacts,
+  setFilters,
+}: AdvancedSearchProps) {
+  const [selectedOrigine, setSelectedOrigine] = useState("");
+  const [selectedContact, setSelectedContact] = useState("");
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const handleFilterChange = () => {
+    console.log("Filters changed", selectedOrigine, selectedContact);
+    
+    setFilters({
+      origine: selectedOrigine,
+      contact: selectedContact,
+    });
+  };
 
   return (
     <div className="flex gap-7">
@@ -168,11 +203,22 @@ export default function AdvancedSearch() {
       >
         Ajouter un Prospect
       </button>
-
-      <DropDown label={"test"} options={["test", "test2"]} />
-      <DropDown label={"test"} options={["test", "test2"]} />
-      <DropDown label={"test"} options={["test", "test2"]} />
-      <DropDown label={"test"} options={["test", "test2"]} />
+      <DropDown
+        label="Origine"
+        options={["Toutes", ...origins]}
+        onSelect={(value) => {
+          setSelectedOrigine(value === "Toutes" ? "" : value);
+          handleFilterChange();
+        }}
+      />{" "}
+      <DropDown
+        label="Contacté par"
+        options={["Tous", ...contacts]}
+        onSelect={(value) => {
+          setSelectedContact(value === "Tous" ? "" : value);
+          handleFilterChange();
+        }}
+      />{" "}
 
       <div className="relative flex items-center rounded-lg p-2 border text-gray-600 select-none gap-2 ">
         <CiSearch className="h-5 w-5" />
@@ -182,7 +228,6 @@ export default function AdvancedSearch() {
           placeholder="Rechercher"
         />
       </div>
-
       {/* Modal */}
       <Modal isOpen={isModalOpen} onClose={closeModal} />
     </div>
