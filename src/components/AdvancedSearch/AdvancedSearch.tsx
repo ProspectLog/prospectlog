@@ -186,15 +186,18 @@ export default function AdvancedSearch({
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const handleFilterChange = () => {
-    console.log("Filters changed", selectedOrigine, selectedContact);
-    
+  const handleFilterChange = (newOrigine?: string, newContact?: string) => {
+    // Vous pouvez passer les nouvelles valeurs ou utiliser celles du state
+    console.log(
+      "Filters changed",
+      newOrigine || selectedOrigine,
+      newContact || selectedContact
+    );
     setFilters({
-      origine: selectedOrigine,
-      contact: selectedContact,
+      origine: newOrigine ?? selectedOrigine,
+      contact: newContact ?? selectedContact,
     });
   };
-
   return (
     <div className="flex gap-7">
       <button
@@ -206,20 +209,21 @@ export default function AdvancedSearch({
       <DropDown
         label="Origine"
         options={["Toutes", ...origins]}
+        selected={selectedOrigine || "Origine"} // Afficher "Origine" par défaut si rien n'est sélectionné
         onSelect={(value) => {
           setSelectedOrigine(value === "Toutes" ? "" : value);
-          handleFilterChange();
+          handleFilterChange(value === "Toutes" ? "" : value, undefined);
         }}
-      />{" "}
+      />
       <DropDown
         label="Contacté par"
         options={["Tous", ...contacts]}
+        selected={selectedContact || "Contacté par"}
         onSelect={(value) => {
           setSelectedContact(value === "Tous" ? "" : value);
-          handleFilterChange();
+          handleFilterChange(undefined, value === "Tous" ? "" : value);
         }}
-      />{" "}
-
+      />
       <div className="relative flex items-center rounded-lg p-2 border text-gray-600 select-none gap-2 ">
         <CiSearch className="h-5 w-5" />
         <input
