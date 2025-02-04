@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../config/firebaseConfig";
 
 export default function ProspectCard({ cardData, statut, handleCardClick }: ProspectCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleClick = () => {
     setIsModalOpen((prev) => !prev);
   };
 
-  // Variants for the container (the UL) and the items (the LIs)
+  // Variants pour l'animation de la liste et de ses éléments
   const listVariants = {
-    hidden: {
-      opacity: 0,
-    },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
@@ -25,28 +26,33 @@ export default function ProspectCard({ cardData, statut, handleCardClick }: Pros
   };
 
   const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: -20,
-    },
+    hidden: { opacity: 0, y: -20 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 20,
-      },
+      transition: { type: "spring", stiffness: 300, damping: 20 },
     },
-    exit: {
-      opacity: 0,
-      y: 20,
-    },
+    exit: { opacity: 0, y: 20 },
   };
 
-  // Définir des styles et des icônes dynamiques en fonction du statut
+  // Fonction pour mettre à jour le statut dans Firebase
+  const handleChangeStatuts = async (newStatus: string) => {
+    try {
+      const cardRef = doc(db, "prospects", cardData.id);
+      await updateDoc(cardRef, {
+        statut: newStatus,
+        updatedAt: new Date(),
+      });
+      // Optionnel : fermer le menu ou mettre à jour l'interface
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du statut :", error);
+    }
+  };
+
+  // Définir des styles et des icônes dynamiques en fonction du statut actuel
   const statusIcon =
-  statut === "pending"
+    statut === "pending"
       ? "😬"
       : statut === "not now"
       ? "💤"
@@ -66,7 +72,7 @@ export default function ProspectCard({ cardData, statut, handleCardClick }: Pros
     <div>
       <div className="relative">
         <button
-          className={`${bgColor} w-[50px] h-[50px] hover:scale-110 transition-transform relative  rounded-full -right-60 top-9 z-50 items-center justify-center flex text-2xl`}
+          className={`${bgColor} w-[50px] h-[50px] hover:scale-110 transition-transform relative rounded-full -right-60 top-9 z-30 items-center justify-center flex text-2xl`}
           onClick={handleClick}
         >
           {statusIcon}
@@ -80,7 +86,7 @@ export default function ProspectCard({ cardData, statut, handleCardClick }: Pros
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              {/* The list with variants for staggered children */}
+              {/* Liste avec animation pour ses éléments */}
               <motion.ul
                 className="absolute -right-16 gap-2 flex z-50 flex-col w-[50px]"
                 variants={listVariants}
@@ -88,31 +94,36 @@ export default function ProspectCard({ cardData, statut, handleCardClick }: Pros
                 animate="visible"
                 exit="exit"
               >
+                {/* Chaque li déclenche la mise à jour du statut dans Firebase */}
                 <motion.li
-                  className="bg-blue-500 w-[50px]   cursor-pointer   h-[50px] flex items-center justify-center rounded-full text-2xl"
+                  className="bg-blue-500 w-[50px] cursor-pointer h-[50px] flex items-center justify-center rounded-full text-2xl"
                   variants={itemVariants}
                   whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+                  onClick={() => handleChangeStatuts("pending")}
                 >
                   😬
                 </motion.li>
                 <motion.li
-                  className="bg-yellow-500 w-[50px]   cursor-pointer h-[50px] flex items-center justify-center rounded-full text-2xl"
+                  className="bg-yellow-500 w-[50px] cursor-pointer h-[50px] flex items-center justify-center rounded-full text-2xl"
                   variants={itemVariants}
                   whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+                  onClick={() => handleChangeStatuts("not now")}
                 >
                   💤
                 </motion.li>
                 <motion.li
-                  className="bg-green-500 w-[50px]  cursor-pointer   h-[50px] flex items-center justify-center rounded-full text-2xl"
+                  className="bg-green-500 w-[50px] cursor-pointer h-[50px] flex items-center justify-center rounded-full text-2xl"
                   variants={itemVariants}
                   whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+                  onClick={() => handleChangeStatuts("confirm")}
                 >
                   🎉
                 </motion.li>
                 <motion.li
-                  className="bg-gray-900 w-[50px] cursor-pointer  h-[50px] flex items-center justify-center rounded-full text-2xl"
+                  className="bg-gray-900 w-[50px] cursor-pointer h-[50px] flex items-center justify-center rounded-full text-2xl"
                   variants={itemVariants}
                   whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+                  onClick={() => handleChangeStatuts("dead")}
                 >
                   💀
                 </motion.li>
@@ -121,12 +132,17 @@ export default function ProspectCard({ cardData, statut, handleCardClick }: Pros
           )}
         </AnimatePresence>
       </div>
-      <div onClick={()=>{handleCardClick(cardData)}} className="mb-10 rounded-lg p-4 shadow-customshadow1 cursor-pointer hover:scale-[1.03] transition-all border border-gray-300 w-[270px] flex flex-col justify-end  relative">
-        <h3 className="text-center text-2xl">{cardData.nom}</h3>
-        {/* Logo dynamique */}
 
-        <div className="mt-3 flex   justify-between">
-          <div className="flex gap-2  text-[10px] text-wrap flex-col ">
+      <div
+        onClick={() => {
+          handleCardClick(cardData);
+        }}
+        className="mb-10 rounded-lg p-4 shadow-customshadow1 cursor-pointer hover:scale-[1.03] transition-all border border-gray-300 w-[270px] flex flex-col justify-end relative"
+      >
+        <h3 className="text-center text-2xl">{cardData.nom}</h3>
+        {/* Contenu de la carte */}
+        <div className="mt-3 flex justify-between">
+          <div className="flex gap-2 text-[10px] text-wrap flex-col">
             <h4>
               <strong>Nom :</strong> <br /> {cardData.nom}
             </h4>
@@ -134,33 +150,28 @@ export default function ProspectCard({ cardData, statut, handleCardClick }: Pros
               <strong>Contacté par :</strong> <br /> {cardData.contact}
             </h4>
             <h4>
-              <strong>Tel : </strong>
-              <br /> {cardData.tel}
+              <strong>Tel :</strong> <br /> {cardData.tel}
             </h4>
           </div>
-          <div className="flex gap-2 w-[30%]  text-[10px] flex-col ">
+          <div className="flex gap-2 w-[30%] text-[10px] flex-col">
             <h4>
-              <strong>Origine :</strong> <br />
-              {cardData.origine}
+              <strong>Origine :</strong> <br /> {cardData.origine}
             </h4>
             <h4>
-              <strong>Métier par :</strong> <br /> {cardData.metier}
+              <strong>Métier :</strong> <br /> {cardData.metier}
             </h4>
             <h4>
-              <strong>Rappel :</strong> <br />
-              {cardData.rappel}
+              <strong>Rappel :</strong> <br /> {cardData.rappel}
             </h4>
           </div>
         </div>
         <div className="bg-slate-200 w-full h-[50px] mt-4"></div>
         <div className="w-full flex justify-between mt-2 text-[10px]">
           <h4>
-            <strong>Création</strong> <br />
-            {cardData.createdAt}{" "}
+            <strong>Création :</strong> <br /> {cardData.createdAt}
           </h4>
           <h4>
-            <strong>Modifications </strong> <br />
-            {cardData.updatedAt}{" "}
+            <strong>Modifications :</strong> <br /> {cardData.updatedAt}
           </h4>
         </div>
       </div>

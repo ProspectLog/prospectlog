@@ -51,7 +51,7 @@ export default function UpdateModal({
   };
 
   return (
-    <div className="fixed inset-0 justify-end bg-black bg-opacity-[0.05] flex left-0 ">
+    <div className="fixed inset-0 justify-end bg-black bg-opacity-[0.05] flex left-0 z-50 ">
       <motion.div
         initial={{ x: "100%" }}
         animate={{ x: 0 }}

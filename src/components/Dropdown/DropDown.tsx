@@ -10,7 +10,7 @@ type DropDownProps = {
 
 export default function DropDown({ label, options, selected, onSelect }: DropDownProps) {
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="relative inline-block text-left z-40">
       <div>
         <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
           {/* Afficher la valeur sélectionnée si présente, sinon le label */}
