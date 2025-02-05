@@ -168,9 +168,9 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
 }
 
 export default function AdvancedSearch({
-  origins,
-  contacts,
-  setFilters,
+  origins = [],         // Valeur par défaut : tableau vide
+  contacts = [],        // Valeur par défaut : tableau vide
+  setFilters = () => {} // Fonction vide par défaut
 }: AdvancedSearchProps) {
   const [selectedOrigine, setSelectedOrigine] = useState("");
   const [selectedContact, setSelectedContact] = useState("");
