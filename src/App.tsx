@@ -9,6 +9,7 @@ import ProspectCard from "./components/Card/ProspectCard";
 import UpdateModal from "./components/Modal/UpdateModal /UpdateModal";
 import { collection, onSnapshot, Timestamp } from "firebase/firestore";
 import { db } from "./config/firebaseConfig";
+import { use } from "motion/react-client";
 
 function App() {
   const [selectedCard, setSelectedCard] = useState<
@@ -18,6 +19,8 @@ function App() {
   const [prospectData, setProspectData] = useState<
     { cardData: ProspectCardProps["cardData"]; statut: string }[]
   >([]);
+  const [loginCheckData, setLoginCheckData] = useState([]);
+
   const [filteredData, setFilteredData] = useState(prospectData);
   const [filters, setFilters] = useState({ origine: "", contact: "" });
   const [origins, setOrigins] = useState<string[]>([]);
@@ -65,6 +68,21 @@ function App() {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const LoginCollectionRef = collection(db, "loginCheck");
+    const unsubscribe = onSnapshot(LoginCollectionRef, (snapshot) => {
+      const data = snapshot.docs.map((doc) => {
+        console.log(doc.data());
+      });
+      
+      setLoginCheckData(data);
+
+    });
+    return () => unsubscribe();
+
+
   }, []);
 
   useEffect(() => {

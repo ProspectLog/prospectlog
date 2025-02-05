@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { IoIosWarning } from "react-icons/io";
 import { db } from "../../../config/firebaseConfig"; // Importez votre instance Firebase
-import { doc, updateDoc, Timestamp , deleteDoc} from "firebase/firestore"; // Importez les outils nécessaires
+import { doc, updateDoc, Timestamp, deleteDoc } from "firebase/firestore"; // Importez les outils nécessaires
+import { checkAndAddLoginCheck } from "../../../utils/logincheckutils"; // Importez la fonction pour ajouter un login check
 
 export default function UpdateModal({
   cardData,
@@ -22,13 +23,11 @@ export default function UpdateModal({
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
 
-
     try {
       await deleteDoc(doc(db, "prospects", cardData.id));
       console.log("Document supprimé avec succès");
       onClose(); // Fermez la modal après soumission
-
-    }catch (error) {
+    } catch (error) {
       console.error("Erreur lors de la suppression du document : ", error);
     }
   };
@@ -44,7 +43,8 @@ export default function UpdateModal({
       };
       await updateDoc(docRef, updateData);
       console.log("Document mis à jour avec succès");
-      onClose(); // Fermez la modal après soumission
+
+      await checkAndAddLoginCheck(); // Appel de la fonction pour ajouter un login check
     } catch (error) {
       console.error("Erreur lors de la mise à jour du document : ", error);
     }

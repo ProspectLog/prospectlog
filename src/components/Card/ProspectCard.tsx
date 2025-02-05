@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
+import { checkAndAddLoginCheck } from "../../utils/logincheckutils";
 
 export default function ProspectCard({ cardData, statut, handleCardClick }: ProspectCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,6 +46,7 @@ export default function ProspectCard({ cardData, statut, handleCardClick }: Pros
       });
       // Optionnel : fermer le menu ou mettre à jour l'interface
       setIsModalOpen(false);
+      await checkAndAddLoginCheck(); // Appel de la fonction pour ajouter un login check
     } catch (error) {
       console.error("Erreur lors de la mise à jour du statut :", error);
     }

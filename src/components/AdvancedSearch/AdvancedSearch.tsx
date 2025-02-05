@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { db } from "../../config/firebaseConfig"; // Importez votre instance Firebase
-import { collection, addDoc } from "firebase/firestore"; // Importez les outils nécessaires
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore"; // Importez les outils nécessaires
 import DropDown from "../Dropdown/DropDown";
 import { CiSearch } from "react-icons/ci";
+import { checkAndAddLoginCheck } from "../../utils/logincheckutils";
 
 function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [formData, setFormData] = useState({
@@ -25,12 +26,16 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     e.preventDefault();
 
     try {
+      // Ajout dans la collection "prospects"
       const docRef = await addDoc(collection(db, "prospects"), {
         ...formData,
         createdAt: new Date(), // Ajoute le timestamp de création
         updatedAt: new Date(), // Ajoute le timestamp de modification
       });
       console.log("Document ajouté avec ID : ", docRef.id);
+
+      await checkAndAddLoginCheck(); // Appel de la fonction pour ajouter un login check
+      // --------------------------------------------------------
 
       // Réinitialise le formulaire et ferme la modal
       setFormData({
@@ -47,6 +52,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
       console.error("Erreur lors de l'ajout du document : ", error);
     }
   };
+
   if (!isOpen) return null;
 
   return (
@@ -58,9 +64,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
         <h2 className="text-xl font-bold mb-4">Ajouter un Prospect</h2>
         <form className="space-y-4 relative" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Nom
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Nom</label>
             <input
               type="text"
               name="nom"
@@ -84,9 +88,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Tel
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Tel</label>
             <input
               type="tel"
               name="tel"
@@ -97,9 +99,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Origine
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Origine</label>
             <input
               type="text"
               name="origine"
@@ -110,9 +110,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Métier
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Métier</label>
             <input
               type="text"
               name="metier"
@@ -123,9 +121,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Rappel
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Rappel</label>
             <input
               type="date"
               name="rappel"
@@ -136,9 +132,7 @@ function Modal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Statut
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Statut</label>
             <select
               name="statut"
               value={formData.statut}
@@ -180,14 +174,12 @@ export default function AdvancedSearch({
 }: AdvancedSearchProps) {
   const [selectedOrigine, setSelectedOrigine] = useState("");
   const [selectedContact, setSelectedContact] = useState("");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const handleFilterChange = (newOrigine?: string, newContact?: string) => {
-    // Vous pouvez passer les nouvelles valeurs ou utiliser celles du state
     console.log(
       "Filters changed",
       newOrigine || selectedOrigine,
@@ -198,6 +190,7 @@ export default function AdvancedSearch({
       contact: newContact ?? selectedContact,
     });
   };
+
   return (
     <div className="flex gap-7">
       <button
@@ -209,7 +202,7 @@ export default function AdvancedSearch({
       <DropDown
         label="Origine"
         options={["Toutes", ...origins]}
-        selected={selectedOrigine || "Origine"} // Afficher "Origine" par défaut si rien n'est sélectionné
+        selected={selectedOrigine || "Origine"}
         onSelect={(value) => {
           setSelectedOrigine(value === "Toutes" ? "" : value);
           handleFilterChange(value === "Toutes" ? "" : value, undefined);
