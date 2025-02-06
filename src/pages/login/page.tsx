@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { motion } from "framer-motion";
 import GoogleButton from "../../components/button/GoogleButton";
 import MicrosoftButton from "../../components/button/MicrosoftButton";
