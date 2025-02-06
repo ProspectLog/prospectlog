@@ -1,71 +1,107 @@
-import { useState } from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { FaPen } from 'react-icons/fa'; // Importer l'icône du stylo
-import { MdBorderColor } from 'react-icons/md';
+import { FaPen } from 'react-icons/fa';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { db } from '../../config/firebaseConfig';
 
-// Enregistrer les éléments nécessaires pour Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function WeeklyStats() {
-  const [completed, setCompleted] = useState(20); // Tâches déjà faites
-  const [remaining, setRemaining] = useState(90); // Tâches restantes
-  const [total, setTotal] = useState(completed + remaining); // Total des tâches
-  const [isEditing, setIsEditing] = useState(false); // État pour gérer l'édition du total
-  const [newTotal, setNewTotal] = useState(total); // Nouveau total à modifier
+  const [completed, setCompleted] = useState(0);
+  const [remaining, setRemaining] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newTotal, setNewTotal] = useState(0);
 
-  const data = {
-    labels: ['Progress', 'A faire'], // Légende du camembert
+  const statsDocRef = doc(db, 'weeklyStats', 'stats');
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      statsDocRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setCompleted(data.completed || 0);
+          setRemaining(data.remaining || 0);
+          setTotal(data.total || 0);
+          // Met à jour newTotal seulement si on n'est pas en mode édition
+          if (!isEditing) {
+            setNewTotal(data.total || 0);
+          }
+        }
+      },
+      (error) => {
+        console.error('Error listening to stats:', error);
+      }
+    );
+    return () => unsubscribe();
+  }, [statsDocRef, isEditing]);
+
+  const chartData = {
+    labels: ['Progress', 'A faire'],
     datasets: [
       {
         data: [completed, remaining],
-        backgroundColor: ['#4CAF50', '#E0E0E0'], // Couleur du camembert
+        backgroundColor: ['#4CAF50', '#E0E0E0'],
         hoverBackgroundColor: ['#45A049', '#C0C0C0'],
-        borderWidth: 2, // Bordure pour l'esthétique
+        borderWidth: 2,
       },
     ],
   };
 
   const options = {
-    rotation: -90, // Commence en haut
-    circumference: 180, // Demi-camembert
-    cutout: '85%', // Cercle interne pour un effet progressif
+    rotation: -90,
+    circumference: 180,
+    cutout: '85%',
     plugins: {
-      legend: {
-        display: false, // Masquer la légende
-      },
-      tooltip: {
-        enabled: true, // Afficher les infos au survol
-      },
+      legend: { display: false },
+      tooltip: { enabled: true },
     },
   };
 
-  // Fonction pour gérer l'ajout
-  const handleAdd = () => {
+  // Fonction qui crée ou met à jour le document (création si inexistant grâce à setDoc merge:true)
+  const updateStatsInFirebase = async (newCompleted, newRemaining, newTotalValue = total) => {
+    try {
+      await setDoc(
+        statsDocRef,
+        {
+          completed: newCompleted,
+          remaining: newRemaining,
+          total: newTotalValue,
+        },
+        { merge: true }
+      );
+    } catch (error) {
+      console.error('Error updating stats:', error);
+    }
+  };
+
+  const handleAdd = async () => {
     if (remaining > 0) {
-      setCompleted(completed + 1);
-      setRemaining(remaining - 1);
+      const updatedCompleted = completed + 1;
+      const updatedRemaining = remaining - 1;
+      await updateStatsInFirebase(updatedCompleted, updatedRemaining);
     }
   };
 
-  // Fonction pour gérer la suppression
-  const handleRemove = () => {
+  const handleRemove = async () => {
     if (completed > 0) {
-      setCompleted(completed - 1);
-      setRemaining(remaining + 1);
+      const updatedCompleted = completed - 1;
+      const updatedRemaining = remaining + 1;
+      await updateStatsInFirebase(updatedCompleted, updatedRemaining);
     }
   };
 
-  // Fonction pour basculer en mode édition
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
-  // Fonction pour valider la modification du total
-  const handleValidateClick = () => {
+  const handleValidateClick = async () => {
     if (newTotal >= completed) {
-      setTotal(newTotal);
-      setRemaining(newTotal - completed);
+      await updateStatsInFirebase(completed, newTotal - completed, newTotal);
       setIsEditing(false);
     } else {
       alert("Le total ne peut pas être inférieur aux tâches complétées.");
@@ -73,17 +109,16 @@ export default function WeeklyStats() {
   };
 
   return (
-    
-    <div className=" w-[45%] h-[300px] mt-2 mb-10 rounded-lg p-4 flex flex-col justify-center items-center shadow-customshadow1 border border-gray-300 relative">
-      <Doughnut data={data} options={options} />
-      {/* Texte au centre du graphique */}
+    <div className="w-[45%] h-[300px] mt-2 mb-10 rounded-lg p-4 flex flex-col justify-center items-center shadow-customshadow1 border border-gray-300 relative">
+      <Doughnut data={chartData} options={options} />
+      {/* Texte centré dans le graphique */}
       <div className="absolute flex flex-col items-center bottom-20">
         <span className="text-lg font-bold text-gray-800">{`${completed} / ${total}`}</span>
         <span className="text-sm text-gray-600">Tâches faites</span>
         <span className="text-sm text-gray-600">Restant: {remaining}</span>
       </div>
 
-      {/* Icône du stylo pour l'édition */}
+      {/* Icône du stylo pour passer en mode édition */}
       <div
         onClick={handleEditClick}
         className="absolute top-4 right-4 cursor-pointer text-md text-gray-400 transition-all hover:text-gray-500"
