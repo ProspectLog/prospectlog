@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 import Container from "./components/Stats/Container/Container";
 import AdvancedSearch from "./components/AdvancedSearch/AdvancedSearch";
 import WeklyStats from "./components/Stats/WeklyStats";
@@ -7,6 +8,7 @@ import MonthlyStats from "./components/Stats/MonthlyStats";
 import Nav from "./components/Nav/Nav";
 import ProspectCard from "./components/Card/ProspectCard";
 import UpdateModal from "./components/Modal/UpdateModal /UpdateModal";
+import Login from "./pages/login/page";
 import { collection, onSnapshot, Timestamp } from "firebase/firestore";
 import { db } from "./config/firebaseConfig";
 import { use } from "motion/react-client";
@@ -109,26 +111,34 @@ function App() {
   return (
     <>
       <Nav />
-      <Container>
-        <div className="flex justify-between">
-          <WeklyStats />
-          <UserInfo />
-        </div>
-        <MonthlyStats />
-        <AdvancedSearch origins={origins} contacts={contacts} setFilters={setFilters} />
-        <div className="flex gap-10 mt-10 flex-wrap">
-          {filteredData.map((card, index) => (
-            <div key={index}>
-              <ProspectCard
-                key={index}
-                cardData={card.cardData}
-                statut={card.statut}
-                handleCardClick={handleCardClick}
-              />
-            </div>
-          ))}
-        </div>
-      </Container>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <Container>
+              <div className="flex justify-between">
+                <WeklyStats />
+                <UserInfo />
+              </div>
+              <MonthlyStats />
+              <AdvancedSearch origins={origins} contacts={contacts} setFilters={setFilters} />
+              <div className="flex gap-10 mt-10 flex-wrap">
+                {filteredData.map((card, index) => (
+                  <div key={index}>
+                    <ProspectCard
+                      key={index}
+                      cardData={card.cardData}
+                      statut={card.statut}
+                      handleCardClick={handleCardClick}
+                    />
+                  </div>
+                ))}
+              </div>
+            </Container>
+          }
+        />
+      </Routes>
 
       {isModalOpen && selectedCard && (
         <UpdateModal cardData={selectedCard} onClose={handleCloseModal} />
