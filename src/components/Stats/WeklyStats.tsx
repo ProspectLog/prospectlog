@@ -63,7 +63,7 @@ export default function WeeklyStats() {
   };
 
   // Fonction qui crée ou met à jour le document (création si inexistant grâce à setDoc merge:true)
-  const updateStatsInFirebase = async (newCompleted, newRemaining, newTotalValue = total) => {
+  const updateStatsInFirebase = async (newCompleted: number, newRemaining: number, newTotalValue = total) => {
     try {
       await setDoc(
         statsDocRef,

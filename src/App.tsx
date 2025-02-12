@@ -11,7 +11,7 @@ import UpdateModal from "./components/Modal/UpdateModal /UpdateModal";
 import Login from "./pages/login/page";
 import { collection, onSnapshot, Timestamp } from "firebase/firestore";
 import { db } from "./config/firebaseConfig";
-import { use } from "motion/react-client";
+
 
 function App() {
   const [selectedCard, setSelectedCard] = useState<
@@ -19,9 +19,8 @@ function App() {
   >(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [prospectData, setProspectData] = useState<
-    { cardData: ProspectCardProps["cardData"]; statut: string }[]
+    { cardData: ProspectCardProps["cardData"]; statut: "pending" | "not now" | "confirm" | "dead" }[]
   >([]);
-  const [loginCheckData, setLoginCheckData] = useState([]);
 
   const [filteredData, setFilteredData] = useState(prospectData);
   const [filters, setFilters] = useState({ origine: "", contact: "" });
@@ -59,7 +58,7 @@ function App() {
           statut: docData.statut || "pending",
         };
       });
-      setProspectData(data as { cardData: ProspectCardProps["cardData"]; statut: string }[]);
+      setProspectData(data as { cardData: ProspectCardProps["cardData"]; statut: "pending" | "not now" | "confirm" | "dead" }[]);
 
       // Mettre à jour les filtres (origines et contacts) à partir des données récupérées
       const uniqueOrigins = Array.from(new Set(data.map((item) => item.cardData.origine))).filter(Boolean);
@@ -72,20 +71,7 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const LoginCollectionRef = collection(db, "loginCheck");
-    const unsubscribe = onSnapshot(LoginCollectionRef, (snapshot) => {
-      const data = snapshot.docs.map((doc) => {
-        console.log(doc.data());
-      });
-      
-      setLoginCheckData(data);
 
-    });
-    return () => unsubscribe();
-
-
-  }, []);
 
   useEffect(() => {
     console.log("Filters changed", filters);

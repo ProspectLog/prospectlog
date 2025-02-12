@@ -1,6 +1,14 @@
 import { useState } from "react";
+
+type AdvancedSearchProps = {
+  origins?: string[];
+  contacts?: string[];
+  setFilters?: (filters: { origine: string; contact: string }) => void;
+}
+
+
 import { db } from "../../config/firebaseConfig"; // Importez votre instance Firebase
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore"; // Importez les outils nécessaires
+import { collection, addDoc } from "firebase/firestore"; // Importez les outils nécessaires
 import DropDown from "../Dropdown/DropDown";
 import { CiSearch } from "react-icons/ci";
 import { checkAndAddLoginCheck } from "../../utils/logincheckutils";

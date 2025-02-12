@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import AdvancedSearch from "../AdvancedSearch"; // après tous les mocks
-import { create } from "motion/react-client";
 
 
 

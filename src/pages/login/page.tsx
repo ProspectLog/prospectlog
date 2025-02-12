@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import GoogleButton from "../../components/button/GoogleButton";
 import MicrosoftButton from "../../components/button/MicrosoftButton";
+import { useState } from "react";
 
 export default function Page() {
   const [email, setEmail] = useState("");
