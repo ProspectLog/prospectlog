@@ -11,6 +11,7 @@ import UpdateModal from "./components/Modal/UpdateModal /UpdateModal";
 import Login from "./pages/login/page";
 import { collection, onSnapshot, Timestamp } from "firebase/firestore";
 import { db } from "./config/firebaseConfig";
+import Register from "./pages/register/page";
 
 
 function App() {
@@ -99,6 +100,7 @@ function App() {
       <Nav />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/"
           element={
